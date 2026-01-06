@@ -1,0 +1,128 @@
+[
+  {
+    "namespace": "Group",
+    "object": "engineering",
+    "relation": "members",
+    "subject_set": { "namespace": "User", "object": "alice" }
+  },
+  {
+    "namespace": "Group",
+    "object": "engineering",
+    "relation": "members",
+    "subject_set": { "namespace": "User", "object": "bob" }
+  },
+  {
+    "namespace": "Group",
+    "object": "marketing",
+    "relation": "members",
+    "subject_set": { "namespace": "User", "object": "charlie" }
+  },
+  {
+    "namespace": "Group",
+    "object": "executives",
+    "relation": "members",
+    "subject_set": { "namespace": "User", "object": "diana" }
+  },
+
+  {
+    "namespace": "Folder",
+    "object": "company-root",
+    "relation": "owners",
+    "subject_set": { "namespace": "User", "object": "diana" }
+  },
+  {
+    "namespace": "Folder",
+    "object": "company-root",
+    "relation": "viewers",
+    "subject_set": { "namespace": "Group", "object": "executives", "relation": "members" }
+  },
+
+  {
+    "namespace": "Folder",
+    "object": "engineering-docs",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "company-root" }
+  },
+  {
+    "namespace": "Folder",
+    "object": "engineering-docs",
+    "relation": "owners",
+    "subject_set": { "namespace": "User", "object": "alice" }
+  },
+  {
+    "namespace": "Folder",
+    "object": "engineering-docs",
+    "relation": "editors",
+    "subject_set": { "namespace": "Group", "object": "engineering", "relation": "members" }
+  },
+
+  {
+    "namespace": "Folder",
+    "object": "marketing-docs",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "company-root" }
+  },
+  {
+    "namespace": "Folder",
+    "object": "marketing-docs",
+    "relation": "owners",
+    "subject_set": { "namespace": "User", "object": "charlie" }
+  },
+  {
+    "namespace": "Folder",
+    "object": "marketing-docs",
+    "relation": "editors",
+    "subject_set": { "namespace": "Group", "object": "marketing", "relation": "members" }
+  },
+
+  {
+    "namespace": "Document",
+    "object": "architecture-design.pdf",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "engineering-docs" }
+  },
+  {
+    "namespace": "Document",
+    "object": "api-specification.md",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "engineering-docs" }
+  },
+  {
+    "namespace": "Document",
+    "object": "api-specification.md",
+    "relation": "owners",
+    "subject_set": { "namespace": "User", "object": "bob" }
+  },
+
+  {
+    "namespace": "Document",
+    "object": "brand-guidelines.pdf",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "marketing-docs" }
+  },
+  {
+    "namespace": "Document",
+    "object": "q4-campaign.pptx",
+    "relation": "parents",
+    "subject_set": { "namespace": "Folder", "object": "marketing-docs" }
+  },
+
+  {
+    "namespace": "Document",
+    "object": "cross-team-project.docx",
+    "relation": "owners",
+    "subject_set": { "namespace": "User", "object": "alice" }
+  },
+  {
+    "namespace": "Document",
+    "object": "cross-team-project.docx",
+    "relation": "editors",
+    "subject_set": { "namespace": "User", "object": "charlie" }
+  },
+  {
+    "namespace": "Document",
+    "object": "cross-team-project.docx",
+    "relation": "viewers",
+    "subject_set": { "namespace": "User", "object": "bob" }
+  }
+]

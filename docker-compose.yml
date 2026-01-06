@@ -1,0 +1,39 @@
+services:
+  keto:
+    image: oryd/keto:v0.12.0
+    ports:
+      - "4466:4466"  # Read API
+      - "4467:4467"  # Write API
+    command: serve -c /etc/keto/keto.yaml
+    volumes:
+      - ./keto.yaml:/etc/keto/keto.yaml:ro
+      - ./namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4466/health/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+
+  keto-init:
+    image: oryd/keto:v0.12.0
+    depends_on:
+      keto:
+        condition: service_healthy
+    volumes:
+      - ./relation-tuples:/data/relation-tuples:ro
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "Loading relationships into Keto..."
+        keto relation-tuple create /data/relation-tuples/relationships.json \
+          --insecure-disable-transport-security \
+          --write-remote keto:4467 \
+          --read-remote keto:4466
+        echo ""
+        echo "Relationships loaded successfully!"
+        echo ""
+        echo "Sample permission checks you can try:"
+        echo "  docker compose exec keto keto check User:alice view Document architecture-design.pdf --insecure-disable-transport-security"
+        echo "  docker compose exec keto keto check User:bob edit Document api-specification.md --insecure-disable-transport-security"
