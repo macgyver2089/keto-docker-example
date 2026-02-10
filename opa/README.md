@@ -126,10 +126,12 @@ Files
 
 Quick start
 
-1. Ensure Keto is running (from project root):
+**Important**: The OPA policies in this folder require the `group-direct-permission` dataset to function properly, as they rely on the ShareApprovers group and document permissions defined in that model.
+
+1. Ensure Keto is running with the group-direct-permission dataset (from project root):
 
 ```bash
-PERMISSION_TYPE=user-only-permission docker compose up -d
+PERMISSION_TYPE=group-direct-permission docker compose up -d
 ```
 
 2. Start OPA in server mode and load the policies:
@@ -385,6 +387,11 @@ Denied (no permissions):
 ```
 
 Notes
+
+**Required Dataset**:
+- ⚠️ **IMPORTANT**: These OPA policies require Keto to be running with the `group-direct-permission` dataset (`PERMISSION_TYPE=group-direct-permission`).
+- The policies depend on the ShareApprovers group and document permissions defined in that model.
+- Using other datasets (like `user-only-permission`) will result in policy failures or unexpected behavior.
 
 **OPA & Keto Integration**:
 - The policies use `host.docker.internal` as the Keto host so that OPA (when run in Docker) can reach the Keto service on the host. If you run everything on the host, the policy will work as-is since it falls back to localhost.
