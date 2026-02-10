@@ -7,7 +7,7 @@ services:
     command: serve -c /etc/keto/keto.yaml
     volumes:
       - ./keto.yaml:/etc/keto/keto.yaml:ro
-      - ./namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
+      - ./permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:4466/health/ready"]
@@ -22,7 +22,7 @@ services:
       keto:
         condition: service_healthy
     volumes:
-      - ./relation-tuples:/data/relation-tuples:ro
+      - ./permissions/${PERMISSION_TYPE:-group-direct-permission}:/data/relation-tuples:ro
     entrypoint: ["sh", "-c"]
     command:
       - |

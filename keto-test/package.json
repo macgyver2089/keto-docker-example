@@ -1,0 +1,17 @@
+{
+  "name": "keto-test",
+  "version": "1.0.0",
+  "description": "Node.js tests for Ory Keto permissions",
+  "type": "module",
+  "main": "test-permissions.js",
+  "scripts": {
+    "test": "node test-permissions.js"
+  },
+  "keywords": [
+    "keto",
+    "permissions",
+    "testing"
+  ],
+  "author": "",
+  "license": "ISC"
+}
