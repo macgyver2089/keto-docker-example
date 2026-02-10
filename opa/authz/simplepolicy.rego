@@ -1,11 +1,11 @@
-package authz
+package authz.simple
 
-default allow := false
+default allowSimple := false
 
 # Configure Keto URL (default to host.docker.internal so OPA in Docker can reach Keto)
 keto_url := "http://host.docker.internal:4466"
 
-allow if {
+allowSimple if {
     input.user
     input.document
     input.relation

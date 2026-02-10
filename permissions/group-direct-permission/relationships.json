@@ -226,5 +226,41 @@
       "namespace": "User",
       "object": "charlie"
     }
+  },
+  {
+    "namespace": "Group",
+    "object": "ShareApprovers",
+    "relation": "members",
+    "subject_set": {
+      "namespace": "User",
+      "object": "diana"
+    }
+  },
+  {
+    "namespace": "Group",
+    "object": "ShareApprovers",
+    "relation": "members",
+    "subject_set": {
+      "namespace": "User",
+      "object": "securityPerson1"
+    }
+  },
+  {
+    "namespace": "Group",
+    "object": "ShareApprovers",
+    "relation": "members",
+    "subject_set": {
+      "namespace": "User",
+      "object": "securityPerson2"
+    }
+  },
+  {
+    "namespace": "Group",
+    "object": "ShareApprovers",
+    "relation": "members",
+    "subject_set": {
+      "namespace": "User",
+      "object": "securityPerson3"
+    }
   }
 ]

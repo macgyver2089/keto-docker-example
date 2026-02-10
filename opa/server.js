@@ -2,11 +2,19 @@ import express from 'express'
 import fetch from 'node-fetch'
 import jwt from 'jsonwebtoken'
 
-const OPA_URL = process.env.OPA_URL || 'http://localhost:8181/v1/data/authz/allow'
+const OPA_URL = process.env.OPA_URL || 'http://localhost:8181/v1/data/authz/approval/approval_or_not'
 const PORT = process.env.PORT || 3000
 
 const app = express()
 app.use(express.json())
+
+// Middleware to extract client IP
+function extractClientIP(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0].trim() ||
+         req.headers['x-real-ip'] ||
+         req.socket.remoteAddress ||
+         req.connection.remoteAddress
+}
 
 // Map HTTP methods to Keto relations
 const METHOD_TO_RELATION = {
@@ -15,8 +23,8 @@ const METHOD_TO_RELATION = {
   'DELETE': 'delete'
 }
 
-async function checkWithOPA(user, document, relation) {
-  const input = { user, document, relation }
+async function checkWithOPA(user, document, relation, client_ip) {
+  const input = { user, document, relation, client_ip }
 
   const res = await fetch(OPA_URL, {
     method: 'POST',
@@ -30,7 +38,7 @@ async function checkWithOPA(user, document, relation) {
   }
 
   const data = await res.json()
-  return data.result === true
+  return data.result // Returns { allow: boolean, obligations: [...] }
 }
 
 // Middleware to extract and validate JWT
@@ -65,24 +73,46 @@ function authenticateToken(req, res, next) {
 async function handleDocumentRequest(req, res) {
   const { document } = req.params
   const relation = METHOD_TO_RELATION[req.method]
+  const client_ip = extractClientIP(req)
 
   try {
-    const allowed = await checkWithOPA(req.user, document, relation)
+    const decision = await checkWithOPA(req.user, document, relation, client_ip)
     
-    if (allowed) {
+    if (decision.allow) {
       res.json({ 
         allowed: true, 
         action: relation,
         document,
-        user: req.user 
+        user: req.user,
+        client_ip 
       })
     } else {
+      const obligations = Array.from(decision.obligations || [])
+      let message = 'Insufficient permissions'
+      
+      // Find specific obligation types
+      const vpnObligation = obligations.find(o => typeof o === 'string' ? o === 'connect_to_vpn' : o.type === 'connect_to_vpn')
+      const approvalObligation = obligations.find(o => typeof o === 'string' ? o === 'needs_share_approver_approval' : o.type === 'needs_share_approver_approval')
+      const securityObligation = obligations.find(o => typeof o === 'string' ? o === 'security_team_notification' : o.type === 'security_team_notification')
+      
+      if (vpnObligation) {
+        message = 'You must connect to the VPN (10.x network) to access this resource'
+      } else if (approvalObligation) {
+        const approvers = approvalObligation.approvers || []
+        message = `Share action requires approval from ShareApprovers group members: ${approvers.join(', ')}`
+      } else if (securityObligation) {
+        message = 'Access denied. This attempt has been reported to the security team.'
+      }
+      
       res.status(403).json({ 
         allowed: false, 
         action: relation,
         document,
         user: req.user,
-        error: 'Permission denied' 
+        client_ip,
+        error: 'Permission denied',
+        obligations: obligations.length > 0 ? obligations : undefined,
+        message
       })
     }
   } catch (err) {
@@ -103,25 +133,51 @@ app.delete('/documents/:document', authenticateToken, handleDocumentRequest)
 app.post('/documents/:document/share', authenticateToken, async (req, res) => {
   const { document } = req.params
   const { shareWith } = req.body
+  const client_ip = extractClientIP(req)
 
   try {
-    const allowed = await checkWithOPA(req.user, document, 'share')
+    const decision = await checkWithOPA(req.user, document, 'share', client_ip)
     
-    if (allowed) {
+    if (decision.allow) {
       res.json({ 
         allowed: true, 
         action: 'share',
         document,
         user: req.user,
+        client_ip,
         shareWith: shareWith || 'unspecified'
       })
     } else {
+      const obligations = Array.from(decision.obligations || [])
+      let message = 'Insufficient permissions to share this document'
+      
+      // Find specific obligation types  
+      const vpnObligation = obligations.find(o => typeof o === 'string' ? o === 'connect_to_vpn' : o?.type === 'connect_to_vpn')
+      const approvalObligation = obligations.find(o => typeof o === 'string' ? o === 'needs_share_approver_approval' : o?.type === 'needs_share_approver_approval')
+      const securityObligation = obligations.find(o => typeof o === 'string' ? o === 'security_team_notification' : o?.type === 'security_team_notification')
+      
+      if (vpnObligation) {
+        message = 'You must connect to the VPN (10.x network) to share this document'
+      } else if (approvalObligation) {
+        const approvers = approvalObligation?.approvers || []
+        if (approvers.length > 0) {
+          message = `Share action requires approval from ShareApprovers group members: ${approvers.join(', ')}`
+        } else {
+          message = 'Share action requires approval from ShareApprovers group members'
+        }
+      } else if (securityObligation) {
+        message = 'Access denied. This attempt has been reported to the security team.'
+      }
+      
       res.status(403).json({ 
         allowed: false, 
         action: 'share',
         document,
         user: req.user,
-        error: 'Permission denied - cannot share this document' 
+        client_ip,
+        error: 'Permission denied - cannot share this document',
+        obligations: obligations.length > 0 ? obligations : undefined,
+        message
       })
     }
   } catch (err) {
