@@ -200,6 +200,94 @@ curl -X PUT http://localhost:4467/admin/relation-tuples \
   }'
 ```
 
+## OPA + Keto Integration
+
+This project includes an **Open Policy Agent (OPA)** integration that demonstrates advanced authorization patterns by combining OPA policy evaluation with Keto permission checks. The integration provides REST API endpoints with JWT authentication and a sophisticated obligation system.
+
+### What's Included
+
+The `opa/` folder contains:
+- **Three different policy implementations** with varying authorization logic
+- **Express REST API server** with JWT token validation
+- **CLI testing client** for easy permission testing
+- **Obligation system** that provides actionable feedback when access is denied
+
+**Policy Types:**
+1. **Approval Groups Policy** - Advanced authorization with ShareApprovers group membership and multi-tier obligations
+2. **VPN Policy** - Network requirement enforcement (10.x network check) before permission validation
+3. **Simple Policy** - Direct Keto permission check with boolean response
+
+### Quick Start with OPA
+
+**Prerequisites:** Use the `group-direct-permission` permission model for the best OPA experience:
+
+```bash
+# 1. Start Keto with group-direct-permission data
+PERMISSION_TYPE=group-direct-permission docker compose up -d
+
+# Wait for initialization
+docker compose logs -f keto-init
+
+# 2. Start OPA server (from project root)
+docker run -d --name opa -p 8181:8181 \
+  -v "$PWD/opa/authz":/authz \
+  openpolicyagent/opa:latest run --server --addr :8181 --watch /authz
+
+# 3. Navigate to OPA folder and install dependencies
+cd opa
+npm install
+
+# 4. Start the REST API server
+npm start
+# Server starts on http://localhost:3000
+
+# 5. Test permissions (in another terminal)
+npm run check alice GET architecture-design.pdf
+npm run check alice SHARE architecture-design.pdf with bob
+npm run check securityPerson1 SHARE test.pdf with charlie
+```
+
+### Key Features
+
+**ShareApprovers Group:**
+- Special approval group with members: `diana`, `securityPerson1`, `securityPerson2`, `securityPerson3`
+- Members can share any document regardless of Keto permissions
+- Dynamically queried from Keto in real-time
+
+**Obligation System:**
+- When access is denied, policies return structured obligations explaining why
+- Example: User tries to share but only has view permission → Returns list of ShareApprovers who can grant approval
+- JSON response includes obligation type and relevant data (like approver names)
+
+**Sample Responses:**
+
+```json
+// Denied with approver list obligation
+{
+  "allowed": false,
+  "obligations": [{
+    "type": "needs_share_approver_approval",
+    "approvers": ["diana", "securityPerson1", "securityPerson2", "securityPerson3"]
+  }],
+  "message": "Share action requires approval from ShareApprovers group members: ..."
+}
+```
+
+### Learn More
+
+📖 **See the [opa/README.md](opa/README.md) for:**
+- Detailed policy documentation and obligation types
+- REST API endpoint reference
+- Testing different authorization scenarios
+- How to test policies directly via OPA API
+- How to switch between policy implementations
+
+The OPA integration demonstrates real-world patterns like:
+- Group-based authorization with dynamic membership queries
+- Multi-tier access control with fallback rules  
+- Obligation-based denial with actionable feedback
+- Approval workflow foundations
+
 ## Expected Permission Results
 
 | User    | Resource                  | view | edit | delete |
