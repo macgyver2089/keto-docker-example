@@ -29,7 +29,7 @@
   {
     "namespace": "Document",
     "object": "architecture-design.pdf",
-    "relation": "viewers",
+    "relation": "viewerGroups",
     "subject_set": {
       "namespace": "Group",
       "object": "engineering"
@@ -92,27 +92,25 @@
   {
     "namespace": "Folder",
     "object": "company-root",
-    "relation": "viewers",
+    "relation": "viewerGroups",
     "subject_set": {
       "namespace": "Group",
-      "object": "executives",
-      "relation": "members"
+      "object": "executives"
     }
   },
   {
     "namespace": "Folder",
     "object": "engineering-docs",
-    "relation": "editors",
+    "relation": "editorGroups",
     "subject_set": {
       "namespace": "Group",
-      "object": "engineering",
-      "relation": "members"
+      "object": "engineering"
     }
   },
   {
     "namespace": "Folder",
     "object": "engineering-docs",
-    "relation": "editors",
+    "relation": "editorGroups",
     "subject_set": {
       "namespace": "Group",
       "object": "engineering"
@@ -139,7 +137,7 @@
   {
     "namespace": "Folder",
     "object": "engineering-docs",
-    "relation": "viewers",
+    "relation": "viewerGroups",
     "subject_set": {
       "namespace": "Group",
       "object": "engineering"
@@ -148,17 +146,16 @@
   {
     "namespace": "Folder",
     "object": "marketing-docs",
-    "relation": "editors",
+    "relation": "editorGroups",
     "subject_set": {
       "namespace": "Group",
-      "object": "marketing",
-      "relation": "members"
+      "object": "marketing"
     }
   },
   {
     "namespace": "Folder",
     "object": "marketing-docs",
-    "relation": "editors",
+    "relation": "editorGroups",
     "subject_set": {
       "namespace": "Group",
       "object": "marketing"
@@ -185,7 +182,7 @@
   {
     "namespace": "Folder",
     "object": "marketing-docs",
-    "relation": "viewers",
+    "relation": "viewerGroups",
     "subject_set": {
       "namespace": "Group",
       "object": "marketing"

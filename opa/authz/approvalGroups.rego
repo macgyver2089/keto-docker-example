@@ -9,20 +9,6 @@ approval_or_not := {
 	"obligations": obligations,
 }
 
-# Check if user is in ShareApprovers group
-in_share_approvers_group if {
-	input.user
-	resp := http.send({
-		"method": "GET",
-		"url": sprintf("%s/relation-tuples?namespace=Group&relation=members&subject_set.namespace=User&subject_set.object=%s&subject_set.relation=", [keto_url, input.user]),
-		"headers": {"Content-Type": "application/json"},
-	})
-
-	resp.status_code == 200
-	some tuple in resp.body.relation_tuples
-	tuple.object == "ShareApprovers"
-}
-
 # Get all members of ShareApprovers group
 get_share_approvers := approvers if {
 	resp := http.send({
@@ -36,16 +22,16 @@ get_share_approvers := approvers if {
 }
 
 # Check specific permission with Keto
-check_keto_permission(relation) := allowed if {
+check_keto_permission(namespace, object, permission) := allowed if {
 	input.user
 	input.document
 	resp := http.send({
 		"method": "POST",
 		"url": sprintf("%s/relation-tuples/check", [keto_url]),
 		"body": {
-			"namespace": "Document",
-			"object": input.document,
-			"relation": relation,
+			"namespace": namespace,
+			"object": object,
+			"relation": permission,
 			"subject_set": {"namespace": "User", "object": input.user},
 		},
 		"headers": {"Content-Type": "application/json"},
@@ -55,19 +41,24 @@ check_keto_permission(relation) := allowed if {
 	allowed := resp.body.allowed
 }
 
+# Check if user is in ShareApprovers group
+in_share_approvers_group if {
+	check_keto_permission("Group", "ShareApprovers", "isMember") == true
+}
+
 # Check if user has share permission from Keto
 has_share_permission if {
-	check_keto_permission("share") == true
+	check_keto_permission("Document", input.document, "share") == true
 }
 
 # Check if user has view permission from Keto
 has_view_permission if {
-	check_keto_permission("view") == true
+	check_keto_permission("Document", input.document, "view") == true
 }
 
 # Check if user has edit permission from Keto
 has_edit_permission if {
-	check_keto_permission("edit") == true
+	check_keto_permission("Document", input.document, "edit") == true
 }
 
 # Check if user has any permission (view or edit, but not share)
@@ -92,7 +83,7 @@ allowCombo if {
 
 allowCombo if {
 	input.relation != "share"
-	check_keto_permission(input.relation) == true
+	check_keto_permission("Document", input.document, input.relation) == true
 }
 
 default allowCombo := false
@@ -121,5 +112,5 @@ obligation contains {"type": "security_team_notification"} if {
 # Obligation: Insufficient permissions for non-share actions
 obligation contains {"type": "insufficient_permissions"} if {
 	input.relation != "share"
-	check_keto_permission(input.relation) != true
+	check_keto_permission("Document", input.document, input.relation) != true
 }
