@@ -46,10 +46,13 @@ class Folder implements Namespace {
     // Can view if: direct viewer, editor, owner, or inherits from parent
     view: (ctx: Context): boolean =>
       this.related.viewers.includes(ctx.subject) ||
+      this.related.viewerGroups.includes(ctx.subject) ||
       this.related.viewerGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.editors.includes(ctx.subject) ||
+      this.related.editorGroups.includes(ctx.subject) ||
       this.related.editorGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.view(ctx)),
@@ -57,8 +60,10 @@ class Folder implements Namespace {
     // Can edit if: direct editor, owner, or inherits from parent
     edit: (ctx: Context): boolean =>
       this.related.editors.includes(ctx.subject) ||
+      this.related.editorGroups.includes(ctx.subject) ||
       this.related.editorGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.edit(ctx)),
@@ -66,6 +71,7 @@ class Folder implements Namespace {
     // Can delete/manage if: owner or inherits from parent
     delete: (ctx: Context): boolean =>
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.delete(ctx)),
@@ -73,6 +79,7 @@ class Folder implements Namespace {
     // Can share if owner
     share: (ctx: Context): boolean =>
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)),
   }
 }
@@ -97,10 +104,13 @@ class Document implements Namespace {
     // Can view if: direct viewer, editor, owner, or inherits from parent folder
     view: (ctx: Context): boolean =>
       this.related.viewers.includes(ctx.subject) ||
+      this.related.viewerGroups.includes(ctx.subject) ||
       this.related.viewerGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.editors.includes(ctx.subject) ||
+      this.related.editorGroups.includes(ctx.subject) ||
       this.related.editorGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.view(ctx)),
@@ -108,8 +118,10 @@ class Document implements Namespace {
     // Can edit if: direct editor, owner, or inherits from parent folder
     edit: (ctx: Context): boolean =>
       this.related.editors.includes(ctx.subject) ||
+      this.related.editorGroups.includes(ctx.subject) ||
       this.related.editorGroups.traverse((g) => g.permits.isMember(ctx)) ||
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.edit(ctx)),
@@ -117,6 +129,7 @@ class Document implements Namespace {
     // Can delete if owner or inherits from parent folder
     delete: (ctx: Context): boolean =>
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)) ||
 
       this.related.parents.traverse((p) => p.permits.delete(ctx)),
@@ -124,6 +137,7 @@ class Document implements Namespace {
     // Can share if owner
     share: (ctx: Context): boolean =>
       this.related.owners.includes(ctx.subject) ||
+      this.related.ownerGroups.includes(ctx.subject) ||
       this.related.ownerGroups.traverse((g) => g.permits.isMember(ctx)),
   }
 }
