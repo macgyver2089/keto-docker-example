@@ -8,10 +8,10 @@ services:
       - 4466
       - 4467
     volumes:
-      - ./keto.yaml:/etc/keto/keto.yaml:ro
-      - ./permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
-      - ./permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json:/etc/keto/relationships.json:ro
-      - ./startup.sh:/etc/keto/startup.sh:ro
+      - ../keto.yaml:/etc/keto/keto.yaml:ro
+      - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
+      - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json:/etc/keto/relationships.json:ro
+      - ../startup.sh:/etc/keto/startup.sh:ro
     entrypoint: ["/bin/sh"]
     command: ["/etc/keto/startup.sh"]
     develop:
