@@ -1,0 +1,61 @@
+{
+  "name": "Ory Keto Example Dev Container",
+  "dockerComposeFile": [
+    "../docker/docker-compose.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace",
+  "runServices": ["keto", "devcontainer"],
+  "overrideCommand": false,
+  "forwardPorts": [4466, 4467],
+  "portsAttributes": {
+    "4466": {
+      "label": "Keto Read API",
+      "onAutoForward": "notify",
+      "protocol": "http"
+    },
+    "4467": {
+      "label": "Keto Write API",
+      "onAutoForward": "notify",
+      "protocol": "http"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "ms-vscode.makefile-tools"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash -c 'mkdir -p ~/.local/bin && curl -sSL https://raw.githubusercontent.com/ory/meta/master/install.sh | bash -s -- -b ~/.local/bin ory && export PATH=\"$HOME/.local/bin:$PATH\" && echo \"export PATH=\\\"$HOME/.local/bin:$PATH\\\"\" >> ~/.zshrc && chmod +x .devcontainer/scripts/*.sh 2>/dev/null || true && cd keto-test && npm install && echo \"alias restart-keto=\\\"bash /workspace/.devcontainer/scripts/restart-keto.sh\\\"\" >> ~/.zshrc && echo \"alias ory-keto-check=\\\"bash /workspace/.devcontainer/scripts/ory-keto-check.sh\\\"\" >> ~/.zshrc && echo \"alias keto=\\\"docker compose -f /workspace/docker/docker-compose.yml exec keto keto\\\"\" >> ~/.zshrc && docker compose -f /workspace/docker/docker-compose.yml up --watch'",
+  "remoteEnv": {
+    "PERMISSION_TYPE": "group-direct-permission"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "moby": false
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  }
+}

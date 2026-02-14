@@ -37,6 +37,15 @@
   },
   {
     "namespace": "Document",
+    "object": "architecture-design2.pdf",
+    "relation": "viewerGroups",
+    "subject_set": {
+      "namespace": "Group",
+      "object": "engineering"
+    }
+  },
+  {
+    "namespace": "Document",
     "object": "brand-guidelines.pdf",
     "relation": "parents",
     "subject_set": {

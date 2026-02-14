@@ -2,56 +2,48 @@ services:
   keto:
     image: oryd/keto:v25.4.0
     ports:
-      - "4466:4466"  # Read API
-      - "4467:4467"  # Write API
+      - "4466:4466" # Read API
+      - "4467:4467" # Write API
     expose:
       - 4466
       - 4467
-    volumes:
-      - ../keto.yaml:/etc/keto/keto.yaml:ro
-      - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts:/etc/keto/namespaces.keto.ts:ro
-      - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json:/etc/keto/relationships.json:ro
-      - ../startup.sh:/etc/keto/startup.sh:ro
-    entrypoint: ["/bin/sh"]
+    networks:
+      - keto-network
+    # volumes:
+    # - ./startup.sh:/etc/keto/startup.sh
+    # - ./keto.yaml:/etc/keto/keto.yaml
+    # - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts:/etc/keto/namespaces.keto.ts
+    # - ../permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json:/etc/keto/relationships.json
+    entrypoint: ["/bin/sh", "-c"]
     command: ["/etc/keto/startup.sh"]
     develop:
       watch:
+        - action: sync
+          path: ./startup.sh
+          target: /etc/keto/startup.sh
+          initial_sync: true
         - action: sync+restart
           path: ./keto.yaml
           target: /etc/keto/keto.yaml
+          initial_sync: true
         - action: sync+restart
-          path: ./permissions
-          target: /etc/keto/
-          ignore:
-            - "**/*.md"
+          path: ../permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts
+          target: /etc/keto/namespaces.keto.ts
+          initial_sync: true
+        - action: sync+restart
+          path: ../permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json
+          target: /etc/keto/relationships.json
+          initial_sync: true
 
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4466/health/ready"]
+      test:
+        ["CMD", "wget", "-q", "--spider", "http://localhost:4466/health/ready"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 3s
 
-  # keto-init:
-  #   No longer needed - relationships are loaded by startup.sh in the keto service
-  #   image: oryd/keto:v0.12.0
-  #   depends_on:
-  #     keto:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./permissions/${PERMISSION_TYPE:-group-direct-permission}:/data/relation-tuples:ro
-  #   entrypoint: ["sh", "-c"]
-  #   command:
-  #     - |
-  #       echo "Loading relationships into Keto..."
-  #       keto relation-tuple create /data/relation-tuples/relationships.json \
-  #         --insecure-disable-transport-security \
-  #         --write-remote keto:4467 \
-  #         --read-remote keto:4466
-  #       echo ""
-  #       echo "Relationships loaded successfully!"
-  #       echo ""
-  #       echo "Sample permission checks you can try:"
-  #       echo "  docker compose exec keto keto check User:alice view File file-1 --insecure-disable-transport-security"
-  #       echo "  docker compose exec keto keto check User:bob view File file-2 --insecure-disable-transport-security"
+networks:
+  keto-network:
+    name: keto-network
