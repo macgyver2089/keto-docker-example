@@ -43,10 +43,10 @@
       }
     }
   },
-  "postCreateCommand": "bash -c 'mkdir -p ~/.local/bin && curl -sSL https://raw.githubusercontent.com/ory/meta/master/install.sh | bash -s -- -b ~/.local/bin ory && export PATH=\"$HOME/.local/bin:$PATH\" && echo \"export PATH=\\\"$HOME/.local/bin:$PATH\\\"\" >> ~/.zshrc && chmod +x .devcontainer/scripts/*.sh 2>/dev/null || true && cd keto-test && npm install && echo \"alias restart-keto=\\\"bash /workspace/.devcontainer/scripts/restart-keto.sh\\\"\" >> ~/.zshrc && echo \"alias ory-keto-check=\\\"bash /workspace/.devcontainer/scripts/ory-keto-check.sh\\\"\" >> ~/.zshrc && echo \"alias keto=\\\"docker compose -f /workspace/docker/docker-compose.yml exec keto keto\\\"\" >> ~/.zshrc && docker compose -f /workspace/docker/docker-compose.yml up --watch'",
-  "remoteEnv": {
-    "PERMISSION_TYPE": "group-direct-permission"
-  },
+  "postCreateCommand": "bash -c 'mkdir -p ~/.local/bin && curl -sSL https://raw.githubusercontent.com/ory/meta/master/install.sh | bash -s -- -b ~/.local/bin ory && npm install -g @ory/keto-namespace-types && export PATH=\"$HOME/.local/bin:$PATH\" && echo \"export PATH=\\\"$HOME/.local/bin:$PATH\\\"\" >> ~/.zshrc && chmod +x .devcontainer/scripts/*.sh 2>/dev/null || true && cd keto-test && npm install && echo \"alias restart-keto=\\\"bash /workspace/.devcontainer/scripts/restart-keto.sh\\\"\" >> ~/.zshrc && echo \"alias ory-keto-check=\\\"bash /workspace/.devcontainer/scripts/ory-keto-check.sh\\\"\" >> ~/.zshrc && echo \"alias keto=\\\"docker compose -f /workspace/docker/docker-compose.yml exec keto keto\\\"\" >> ~/.zshrc && docker compose -f /workspace/docker/docker-compose.yml up --watch'",
+  // "remoteEnv": {
+  //   "PERMISSION_TYPE": "group-direct-permission"
+  // },
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"

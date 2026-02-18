@@ -6,7 +6,7 @@ import sys
 import urllib.request
 
 # Fetch data from Keto
-url = "http://localhost:4466/relation-tuples"
+url = "http://keto:4466/relation-tuples"
 with urllib.request.urlopen(url) as response:
     data = json.loads(response.read())
 

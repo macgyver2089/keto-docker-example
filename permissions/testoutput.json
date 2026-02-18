@@ -1,0 +1,84 @@
+[
+  {
+    "namespace": "File",
+    "object": "file-1",
+    "relation": "organizations",
+    "subject_set": {
+      "namespace": "Organization",
+      "object": "org-1"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "file-1",
+    "relation": "parents",
+    "subject_set": {
+      "namespace": "File",
+      "object": "folder-2"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "file-1",
+    "relation": "viewers",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "file-viewers"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-1",
+    "relation": "organizations",
+    "subject_set": {
+      "namespace": "Organization",
+      "object": "org-1"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-1",
+    "relation": "viewers",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "file-viewers"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-2",
+    "relation": "organizations",
+    "subject_set": {
+      "namespace": "Organization",
+      "object": "org-1"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-2",
+    "relation": "parents",
+    "subject_set": {
+      "namespace": "File",
+      "object": "folder-1"
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-2",
+    "relation": "viewers",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "file-viewers"
+    }
+  },
+  {
+    "namespace": "Organization",
+    "object": "org-1",
+    "relation": "members"
+  },
+  {
+    "namespace": "Role",
+    "object": "file-viewers",
+    "relation": "members"
+  }
+]

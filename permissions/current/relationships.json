@@ -1,0 +1,50 @@
+[
+  {
+    "namespace": "Organization",
+    "object": "org1",
+    "relation": "admin",
+    "subject_id": "cto"
+  },
+  {
+    "namespace": "Organization",
+    "object": "org1",
+    "relation": "file.view",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "scientist",
+      "relation": ""
+    }
+  },
+  {
+    "namespace": "Organization",
+    "object": "org1",
+    "relation": "file.edit",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "researcher",
+      "relation": ""
+    }
+  },
+  {
+    "namespace": "Role",
+    "object": "researcher",
+    "relation": "members",
+    "subject_id": "LabRat"
+  },
+  {
+    "namespace": "Role",
+    "object": "analyst",
+    "relation": "members",
+    "subject_id": "Wizard"
+  },
+  {
+    "namespace": "File",
+    "object": "data.txt",
+    "relation": "organization",
+    "subject_set": {
+      "namespace": "Organization",
+      "object": "org1",
+      "relation": ""
+    }
+  }
+]

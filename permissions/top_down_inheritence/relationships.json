@@ -1,0 +1,54 @@
+[
+  {
+    "namespace": "Role",
+    "object": "file-viewers",
+    "relation": "members",
+    "subject_id": "alice"
+  },
+  {
+    "namespace": "File",
+    "object": "folder-1",
+    "relation": "organizations",
+    "subject_set": {
+      "namespace": "Organization",
+      "object": "org-1",
+      "relation": ""
+    }
+  },
+  {
+    "namespace": "Organization",
+    "object": "org-1",
+    "relation": "members",
+    "subject_id": "alice"
+  },
+  {
+    "namespace": "File",
+    "object": "folder-1",
+    "relation": "viewers",
+    "subject_set": {
+      "namespace": "Role",
+      "object": "file-viewers",
+      "relation": ""
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "folder-2",
+    "relation": "parents",
+    "subject_set": {
+      "namespace": "File",
+      "object": "folder-1",
+      "relation": ""
+    }
+  },
+  {
+    "namespace": "File",
+    "object": "file-1",
+    "relation": "parents",
+    "subject_set": {
+      "namespace": "File",
+      "object": "folder-2",
+      "relation": ""
+    }
+  }
+]

@@ -7,8 +7,8 @@ services:
     expose:
       - 4466
       - 4467
-    networks:
-      - keto-network
+    # networks:
+    #   - keto-network
     # volumes:
     # - ./startup.sh:/etc/keto/startup.sh
     # - ./keto.yaml:/etc/keto/keto.yaml
@@ -27,11 +27,11 @@ services:
           target: /etc/keto/keto.yaml
           initial_sync: true
         - action: sync+restart
-          path: ../permissions/${PERMISSION_TYPE:-group-direct-permission}/namespaces.keto.ts
+          path: ../permissions/${PERMISSION_TYPE:-current}/namespaces.keto.ts
           target: /etc/keto/namespaces.keto.ts
           initial_sync: true
         - action: sync+restart
-          path: ../permissions/${PERMISSION_TYPE:-group-direct-permission}/relationships.json
+          path: ../permissions/${PERMISSION_TYPE:-current}/relationships.json
           target: /etc/keto/relationships.json
           initial_sync: true
 
@@ -44,6 +44,6 @@ services:
       retries: 5
       start_period: 3s
 
-networks:
-  keto-network:
-    name: keto-network
+# networks:
+#   keto-network:
+#     name: keto-network

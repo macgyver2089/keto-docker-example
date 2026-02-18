@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@ory/keto-namespace-types": [
+        "/opt/homebrew/lib/node_modules/@ory/keto-namespace-types"
+      ]
+    },
+    "typeRoots": ["types", "node_modules/@types"]
+  },
+  "include": ["**/*.ts"]
+}
